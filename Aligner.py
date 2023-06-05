@@ -1,6 +1,11 @@
 from typing import List
 from abc import ABC, abstractmethod
 
+"""
+This is a interface Class which is going to be used for strategy pattern,
+in case more strategies for solving the aligment are implemented
+"""
+
 class Aligner(ABC):
 
     def __init__(self, sequences: List[str], identityValue: int, distinctValue: int, 

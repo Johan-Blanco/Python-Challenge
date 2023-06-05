@@ -68,23 +68,29 @@ def alignmentOptions():
 
 def workflow():
     repeat = True
+
     while repeat:
-        sequence1, sequence2 = fileInputOptions()
-        type1, valid1 = lab.validateSequence(sequence1)
-        type2, valid2 = lab.validateSequence(sequence2)
-        if not ( valid1 and valid2 and lab.areComparableSequences(sequence1, sequence2)):
-            print('\n * ERROR: Ivalid Sequences, select an option again... ')
-        else:
-            repeat =  False
-        print(' > First Sequence: ', sequence1)
-        print('   Type:', type1)
-        print('   Valid: ', valid1)
-        print(' > Second Sequence: ', sequence2)
-        print('   Type:', type2)
-        print('   Valid: ', valid2)
-        os.system("pause")
+        while repeat:
+            sequence1, sequence2 = fileInputOptions()
+            type1, valid1 = lab.validateSequence(sequence1)
+            type2, valid2 = lab.validateSequence(sequence2)
+            if not ( valid1 and valid2 and lab.areComparableSequences(sequence1, sequence2)):
+                print('\n * ERROR: Ivalid Sequences, select an option again... ')
+            else:
+                repeat =  False
+            print(' > First Sequence: ', sequence1)
+            print('   Type:', type1)
+            print('   Valid: ', valid1)
+            print(' > Second Sequence: ', sequence2)
+            print('   Type:', type2)
+            print('   Valid: ', valid2)
+            os.system("pause")
 
-    lab.setAligner(SimpleNeedleManAligner([sequence1, sequence2]))
-    alignmentOptions()
+        lab.setAligner(SimpleNeedleManAligner([sequence1, sequence2]))
+        alignmentOptions()
 
+        while repeat not in ['Y', 'N', 'y', 'n']:
+            repeat = input('Start Again? Y/N ... ')
+
+        repeat = repeat in ['Y', 'y']
 workflow()

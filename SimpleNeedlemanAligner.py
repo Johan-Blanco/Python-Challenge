@@ -1,14 +1,25 @@
 from typing import List
 from Aligner import Aligner
 
+"""
+This is a class has the logic to solve the aligment as Chris explained at the
+beginnig of the challenge
+"""
+
 class SimpleNeedleManAligner(Aligner):
 
     def __init__(self, sequences: List[str]= ['GAATTCAGTTA', 'GGATCGA'], identityValue: int = 2, distinctValue: int = -1, gapPenaltyValueRight: int = -2, gapPenaltyValueDown: int = -2) -> None:
         super().__init__(sequences, identityValue, distinctValue, gapPenaltyValueRight, gapPenaltyValueDown)
         self.shortest = sequences[0]
         self.longest = sequences[1]
-    
 
+
+    """
+    Before filling out the matrix some stuff need to be arranged first
+    such as creating the matrix and selecting which one is going to be
+    the longest and which one the shortest, in order to have always
+    the decired results
+    """
     def arrangeBeferoFillout(self):
         if len(self.shortest) > len(self.longest):
             self.longest = self.sequences[0]
@@ -21,6 +32,10 @@ class SimpleNeedleManAligner(Aligner):
         for _ in range(self.rowsLength):
             self.matrix.append([])
 
+    """
+    This method calculates the value that is going to have every position in the matrix
+    following the rules, explained by Chris
+    """
     def getCellValue(self, i, j):
 
         valueList = []
@@ -50,7 +65,11 @@ class SimpleNeedleManAligner(Aligner):
         valueList.append( (leftValue, position) )
 
         return max(valueList, key=lambda item: item[0])
-
+    
+    """
+    This function fills out the matrix and calls the funtion that calculates the value for every position
+    in the matrix
+    """
     def filloutMatrix(self):
         self.arrangeBeferoFillout()    
         for i in range(self.rowsLength):
@@ -58,6 +77,11 @@ class SimpleNeedleManAligner(Aligner):
                 value = self.getCellValue(i, j)[0]
                 self.matrix[i].append(value)
 
+    """
+    This funtion gets the max value between diagnal, left and up values based on the current
+    position in the matrix, this max value is the one that tells the program
+    which on is going to be the next one in order to complete the traceback
+    """
     def getMaxValueForTraceback(self, i, j):
         if i > 0 and j > 0:
             diagonal = (self.matrix[i-1][j-1], (i-1,j-1))
@@ -71,7 +95,12 @@ class SimpleNeedleManAligner(Aligner):
         elif j == 0:
             up = self.matrix[i-1][j], (i-1, j)
             return up
-
+        
+    """
+    This funtions keeps the logic that is needed to get the traceback
+    it was implemented because is used more than 1 time in 'getTraceback' method
+    so that the code is implemented just once.
+    """
     def getTraceBackInfo(self, i, j):
         info = {'position': (i,j), 'value': self.matrix[i][j]}
         if self.shortest[i] == self.longest[j]:
@@ -94,7 +123,10 @@ class SimpleNeedleManAligner(Aligner):
             info['indentity'] = False
             i,j = maxValuePosition
         return info, i, j
-
+    
+    """
+    This funtion keeps the logic of some use cases when creating the traceback 
+    """
     def getTraceback(self):
         i = self.rowsLength - 1
         j = self.columLength - 1
@@ -119,7 +151,9 @@ class SimpleNeedleManAligner(Aligner):
 
         return traceback
 
-
+    """
+    This funtion graphs a human readable representation of the traceback
+    """
     def humaReadableRepresentation(self, traceback): #WRONG
         traceback.reverse()
         line1 = ''
@@ -137,7 +171,10 @@ class SimpleNeedleManAligner(Aligner):
         return line1 + '\n' + line2 + '\n' + line3
         
         
-    
+    """
+    This funtion graphs a matrix and adds the to sequences to make it more
+    understandable
+    """
     def graphMatrix(self):
         graph = '\t'
         space = '\t'
@@ -157,6 +194,11 @@ class SimpleNeedleManAligner(Aligner):
 
         return graph
     
+
+    """
+    This funtion graphs the matrix but prints out just the positions
+    that were collected for the traceback
+    """
     def graphTraceback(self, traceback):
         graph = ''
         space = '\t'
@@ -181,13 +223,18 @@ class SimpleNeedleManAligner(Aligner):
 
         return graph
                 
-
+    """
+    This funtion calculates the alignment Score for a given traceback
+    """
     def getAlighmentScore(self, traceback):
         score = 0
         for info in traceback:
             score += info['value']
         return score
     
+    """
+    This funtion calculates the sequence Identity for a given traceback
+    """
     def getSequenceIdentiry(self, traceback):
         identicalPairCounter = 0
         for info in traceback:
