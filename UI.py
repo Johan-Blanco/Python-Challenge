@@ -62,7 +62,7 @@ def alignmentOptions():
     fileContent += '-------------------------------\n'
     fileContent += '\n' + results['humanReadable']+'\n'
     fileContent += '\nAligment Score: ' + str(results['alignmentScore'])+'\n'
-    fileContent += 'Sequence Identity Score: ' + str(results['sequenceIdentity']) + '%\n'
+    fileContent += 'Sequence Identity Score: ' + str(results['sequenceIdentity']) + '%'
     print(fileContent)
     storeInFile(fileContent)
 
