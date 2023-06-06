@@ -50,21 +50,27 @@ def alignmentOptions():
     options = ['Show Aligment Scoring Table', 'Show Alignment Score',
                'Show Sequence Identity Score', 'Show Human-Readable Representation of the Alignment','Show Complete Analisis']
     results = lab.alignSequences()
-
+    fileContent = ''
     os.system('cls')
-    print('\n\n                               Table')
-    print('_________________________________________________________________________________')
-    print('\n' + results['matrixGraph'])
-    print('\n\n                             Traceback')
-    print('_________________________________________________________________________________')
-    print('\n' + results['tracebackGraph'])
-    print('\n\n                   Human-Readable Representation')
-    print('_________________________________________________________________________________')
-    print('\n' + results['humanReadable'])
-    print('\nAligment Score: ', results['alignmentScore'])
-    print('Sequence Identity Score: ', results['sequenceIdentity'], '%')
+    fileContent += ' Table\n'
+    fileContent += '-------\n'
+    fileContent += results['matrixGraph']+'\n\n'
+    fileContent += ' Traceback\n'
+    fileContent += '-----------\n'
+    fileContent += results['tracebackGraph']+'\n\n'
+    fileContent += ' Human-Readable Representation\n'
+    fileContent += '-------------------------------\n'
+    fileContent += '\n' + results['humanReadable']+'\n'
+    fileContent += '\nAligment Score: ' + str(results['alignmentScore'])+'\n'
+    fileContent += 'Sequence Identity Score: ' + str(results['sequenceIdentity']) + '%\n'
+    print(fileContent)
+    storeInFile(fileContent)
 
 
+def storeInFile(input):
+    file = open("NeedlemanWunsch.txt", 'w')
+    file.write(input)
+    file.close()
 
 def workflow():
     repeat = True
