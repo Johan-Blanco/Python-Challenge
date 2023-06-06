@@ -47,8 +47,6 @@ def fileInputOptions():
     return sequence1, sequence2
 
 def alignmentOptions():
-    options = ['Show Aligment Scoring Table', 'Show Alignment Score',
-               'Show Sequence Identity Score', 'Show Human-Readable Representation of the Alignment','Show Complete Analisis']
     results = lab.alignSequences()
     fileContent = ''
     os.system('cls')
