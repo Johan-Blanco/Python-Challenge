@@ -145,17 +145,17 @@ class SimpleNeedleManAligner(Aligner):
 
         # check to the left
         while j >= 0:
-            info = {'position': (0,j), 'value': self.matrix[i][j]}
-            info['indentity'] = self.shortest[0] == self.longest[j] and info['position'] == (0,0)
+            info = {'position': (0,j), 'value': self.matrix[0][j]}
+            info['indentity'] = info['position'] == (0,0)
             info['gap-in'] = 'shortest' if not info['indentity'] else 'N/A'
             j -= 1
             traceback.append(info)
 
         # check up
         while i >= 0:
-            info = {'position': (i,0), 'value': self.matrix[i][j]}
-            info['indentity'] = self.shortest[0] == self.longest[0] and info['position'] == (0,0)
-            info['gap-in'] = 'longest'if not info['indentity'] else 'N/A'
+            info = {'position': (i,0), 'value': self.matrix[i][0]}
+            info['indentity'] = self.shortest[i] == self.longest[j] and info['position'] == (0,0)
+            info['gap-in'] = 'longest'if info['position'] != (0,0) else 'N/A'
             i -= 1
             traceback.append(info)
 
