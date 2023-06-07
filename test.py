@@ -19,5 +19,7 @@ if __name__ == '__main__':
         aligner = lab.getAligner()
         aligner.filloutMatrix()
         traceback = aligner.getTraceback()
+        for info in traceback:
+            print(info)
         print(aligner.graphTraceback(traceback))
         print(aligner.humaReadableRepresentation(traceback))
