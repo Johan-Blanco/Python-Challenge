@@ -12,7 +12,7 @@ class SimpleNeedleManAligner(Aligner):
         super().__init__(sequences, identityValue, distinctValue, gapPenaltyValueRight, gapPenaltyValueDown)
         self.shortest = sequences[0]
         self.longest = sequences[1]
-
+        self.matrix = []
 
     """
     Before filling out the matrix some stuff need to be arranged first
@@ -21,11 +21,10 @@ class SimpleNeedleManAligner(Aligner):
     the decired results
     """
     def arrangeBeferoFillout(self):
+        self.matrix = []
         if len(self.shortest) > len(self.longest):
             self.longest = self.sequences[0]
             self.shortest = self.sequences[1]
-
-        self.matrix = []
         self.rowsLength = len(self.shortest)
         self.columLength = len(self.longest)
 
@@ -80,7 +79,7 @@ class SimpleNeedleManAligner(Aligner):
     """
     This funtion gets the max value between diagnal, left and up values based on the current
     position in the matrix, this max value is the one that tells the program
-    which on is going to be the next one in order to complete the traceback
+    which one is going to be the next one in order to complete the traceback
     """
     def getMaxValueForTraceback(self, i, j):
         if i > 0 and j > 0:
@@ -98,57 +97,31 @@ class SimpleNeedleManAligner(Aligner):
         
     """
     This funtions keeps the logic that is needed to get the traceback
-    it was implemented because is used more than 1 time in 'getTraceback' method
-    so that the code is implemented just once.
+    following the rules presented by Chris
     """
-    def getTraceBackInfo(self, i, j):
-        info = {'position': (i,j), 'value': self.matrix[i][j]}
-        if self.shortest[i] == self.longest[j]:
-            info['gap-in'] = 'N/A'
-            info['indentity'] = True
-            i,j = i-1, j-1
-        else:
-            maxValuePosition = self.getMaxValueForTraceback(i, j)[1] # use different function
-            if not maxValuePosition == (i-1,j-1) and info['position'] != (0,0):
-                info['gap-in'] = 'shortest' if maxValuePosition[1] == j-1 else 'longest'
-            else:
-                info['gap-in'] = 'N/A'
-            info['indentity'] = False
-            i,j = maxValuePosition
-        return info, i, j
-    
-    def getInfoChrisRules(self, i, j):
-        info = {'position': (i,j), 'value': self.matrix[i][j]}
-        if self.shortest[i] == self.longest[j]:
-            info['gap-in'] = 'N/A'
-            info['indentity'] = True
-            i,j = i-1, j-1
-        else:
-            maxValuePosition = self.getMaxValueForTraceback(i, j)[1] # use different function
-            if not maxValuePosition == (i-1,j-1) and info['position'] != (0,0):
-                info['gap-in'] = 'shortest' if maxValuePosition[1] == j-1 else 'longest'
-            else:
-                info['gap-in'] = 'N/A'
-            info['indentity'] = False
-            i,j = maxValuePosition
-
-        return info, i, j
-    
-    """
-    This funtion keeps the logic of some use cases when creating the traceback 
-    """
-    def getTraceback(self, funtion=getInfoChrisRules):
+    def getTraceback(self):
         i = self.rowsLength - 1
         j = self.columLength - 1
 
         traceback = []
 
         while i > 0 and j > 0:
-            info, i, j = funtion(self, i, j)
+            info = {'position': (i,j), 'value': self.matrix[i][j]}
+            if self.shortest[i] == self.longest[j]:
+                info['gap-in'] = 'N/A'
+                info['indentity'] = True
+                i,j = i-1, j-1
+            else:
+                maxValuePosition = self.getMaxValueForTraceback(i, j)[1] # use different function
+                if not maxValuePosition == (i-1,j-1) and info['position'] != (0,0):
+                    info['gap-in'] = 'shortest' if maxValuePosition[1] == j-1 else 'longest'
+                else:
+                    info['gap-in'] = 'N/A'
+                info['indentity'] = False
+                i,j = maxValuePosition
             traceback.append(info)
-        
 
-        # check to the left
+        # check leftside
         while j > 0:
             info = {'position': (0,j), 'value': self.matrix[0][j]}
             info['gap-in'] = 'shortest'
@@ -156,7 +129,7 @@ class SimpleNeedleManAligner(Aligner):
             j -= 1
             traceback.append(info)
 
-        # check up
+        # check upside
         while i > 0:
             info = {'position': (i,0), 'value': self.matrix[i][0]}
             info['gap-in'] = 'longest'
@@ -164,6 +137,7 @@ class SimpleNeedleManAligner(Aligner):
             i -= 1
             traceback.append(info)
 
+        # 0,0 position
         info = {'position': (i,j), 'value': self.matrix[i][j]}
         info['indentity'] = self.shortest[0] == self.longest[j]
         info['gap-in'] = 'N/A'
@@ -192,7 +166,7 @@ class SimpleNeedleManAligner(Aligner):
         
         
     """
-    This funtion graphs a matrix and adds the to sequences to make it more
+    This funtion graphs a matrix and adds the two sequences to make it more
     understandable
     """
     def graphMatrix(self):
@@ -217,7 +191,7 @@ class SimpleNeedleManAligner(Aligner):
 
     """
     This funtion graphs the matrix but prints out just the positions
-    that were collected for the traceback
+    that were collected in the traceback
     """
     def graphTraceback(self, traceback):
         graph = ''
@@ -245,6 +219,7 @@ class SimpleNeedleManAligner(Aligner):
                 
     """
     This funtion calculates the alignment Score for a given traceback
+    it just accumulate all the matrix values collected in the traceback
     """
     def getAlighmentScore(self, traceback):
         score = 0
@@ -263,3 +238,22 @@ class SimpleNeedleManAligner(Aligner):
 
         sequenceIdentity =  identicalPairCounter / len(self.longest) * 100
         return round(sequenceIdentity, 2)
+    
+
+    """
+    This funtion has the steps to make the whole analisis
+    following the rules presented by Chris
+    """
+    def alignSequences(self):
+        self.filloutMatrix()
+        matrixGraph = self.graphMatrix()
+        alignmentList = []
+        
+        traceback = self.getTraceback()
+        tracebackGraph = self.graphTraceback(traceback)
+        sequenceIdentity = self.getSequenceIdentiry(traceback)
+        alignmentScore = self.getAlighmentScore(traceback)
+        humaReadable = self.humaReadableRepresentation(traceback)
+        alignment = {'traceback': traceback,'tracebackGraph': tracebackGraph, 'sequenceIdentity': sequenceIdentity, 'alignmentScore': alignmentScore, 'humanReadable': humaReadable}
+        alignmentList.append(alignment)
+        return matrixGraph, alignmentList

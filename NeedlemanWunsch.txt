@@ -31,3 +31,4 @@ G	G	A	_	T	C	_	G	_	_	A
 
 Aligment Score: 30
 Sequence Identity Score: 54.55%
+

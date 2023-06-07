@@ -1,8 +1,8 @@
 import os
 import tkinter.filedialog
-import sys
 from LAB import LAB
 from SimpleNeedlemanAligner import SimpleNeedleManAligner
+from MultplePathsNeedlemanAligner import MultplePathsNeedlemanAligner
 
 lab = LAB()
 
@@ -30,7 +30,7 @@ def validateInput(options, message = '\n * ERROR: Invalid Option, try again... '
 def title():
     os.system('cls')
     print('______________________________________________')
-    print('          Sequence Aligner Menu')
+    print('         Sequences Aligner Menu')
     print('______________________________________________')
 
 def fileInputOptions():
@@ -47,20 +47,26 @@ def fileInputOptions():
     return sequence1, sequence2
 
 def alignmentOptions():
-    results = lab.alignSequences()
+    aligner = lab.getAligner()
+    matrixGraph, alignmentList = aligner.alignSequences()
+    print(matrixGraph)
+
     fileContent = ''
     os.system('cls')
     fileContent += ' Table\n'
     fileContent += '-------\n'
-    fileContent += results['matrixGraph']+'\n\n'
-    fileContent += ' Traceback\n'
-    fileContent += '-----------\n'
-    fileContent += results['tracebackGraph']+'\n\n'
-    fileContent += ' Human-Readable Representation\n'
-    fileContent += '-------------------------------\n'
-    fileContent += '\n' + results['humanReadable']+'\n'
-    fileContent += '\nAligment Score: ' + str(results['alignmentScore'])+'\n'
-    fileContent += 'Sequence Identity Score: ' + str(results['sequenceIdentity']) + '%'
+    fileContent += matrixGraph +'\n\n'
+
+    for aligment in alignmentList:
+        fileContent += ' Traceback\n'
+        fileContent += '-----------\n'
+        fileContent += aligment['tracebackGraph']+'\n\n'
+        fileContent += ' Human-Readable Representation\n'
+        fileContent += '-------------------------------\n'
+        fileContent += '\n' + aligment['humanReadable']+'\n'
+        fileContent += '\nAligment Score: ' + str(aligment['alignmentScore'])+'\n'
+        fileContent += 'Sequence Identity Score: ' + str(aligment['sequenceIdentity']) + '%\n\n'
+
     print(fileContent)
     storeInFile(fileContent)
 
@@ -70,7 +76,7 @@ def storeInFile(input):
     file.write(input)
     file.close()
 
-def workflow():
+def run():
     repeat = True
 
     while repeat:
@@ -78,9 +84,12 @@ def workflow():
             sequence1, sequence2 = fileInputOptions()
             type1, valid1 = lab.validateSequence(sequence1)
             type2, valid2 = lab.validateSequence(sequence2)
-            if not ( valid1 and valid2 and lab.areComparableSequences(sequence1, sequence2)):
+            if not ( valid1 and valid2 ):
                 print('\n * ERROR: Ivalid Sequences, select an option again... ')
+            elif not lab.areComparableSequences(sequence1, sequence2):
+                print('\n * ERROR: No Comparable Sequences, select an option again... ')
             else:
+                # print('\n * INFO: Sequences are Comparable and Valid!! ')
                 repeat =  False
             print(' > First Sequence: ', sequence1)
             print('   Type:', type1)
@@ -90,11 +99,18 @@ def workflow():
             print('   Valid: ', valid2)
             os.system("pause")
 
-        lab.setAligner(SimpleNeedleManAligner([sequence1, sequence2]))
-        alignmentOptions()
+        options = ['Show Needleman Wunsch Aligment results (following Chris Presentation)', 
+                   'Show Multiverse Needleman Wunsch Aligment results']
+        option = validateInput(options)
 
+        if option == 1:
+            lab.setAligner(SimpleNeedleManAligner([sequence1, sequence2]))
+        elif option == 2:
+            lab.setAligner(MultplePathsNeedlemanAligner([sequence1, sequence2]))
+        
+        alignmentOptions()
+        print('\nNOTE: File NeedlemanWunsch.txt was created whith the whole run info, check it out!! \n')
         while repeat not in ['Y', 'N', 'y', 'n']:
             repeat = input('Start Again? Y/N ... ')
 
         repeat = repeat in ['Y', 'y']
-workflow()
