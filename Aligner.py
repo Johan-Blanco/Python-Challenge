@@ -2,8 +2,8 @@ from typing import List
 from abc import ABC, abstractmethod
 
 """
-This is a interface Class which is going to be used for strategy pattern,
-in case more strategies for solving the aligment are implemented
+This is an interface Class which is going to be used for strategy pattern,
+in case more strategies are implemented to solve the aligment
 """
 
 class Aligner(ABC):
@@ -44,4 +44,8 @@ class Aligner(ABC):
 
     def getMatrix(self):
         return self.matrix
+    
+    @abstractmethod
+    def alignSequences(self):
+        pass
 

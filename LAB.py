@@ -36,13 +36,3 @@ class LAB:
             if  self.validateType(sequence1, typeList[type]) == self.validateType(sequence2, typeList[type]):
                 return True
         return False
-
-    def alignSequences(self):
-        self.__aligner.filloutMatrix()
-        traceback = self.__aligner.getTraceback()
-        matrixGraph = self.__aligner.graphMatrix()
-        tracebackGraph = self.__aligner.graphTraceback(traceback)
-        sequenceIdentity = self.__aligner.getSequenceIdentiry(traceback)
-        alignmentScore = self.__aligner.getAlighmentScore(traceback)
-        humaReadable = self.__aligner.humaReadableRepresentation(traceback)
-        return {'matrixGraph': matrixGraph, 'tracebackGraph': tracebackGraph, 'sequenceIdentity': sequenceIdentity, 'alignmentScore': alignmentScore, 'humanReadable': humaReadable}
