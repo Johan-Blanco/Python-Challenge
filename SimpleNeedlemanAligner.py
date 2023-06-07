@@ -157,9 +157,9 @@ class SimpleNeedleManAligner(Aligner):
         longest = [*self.longest[::-1]]
 
         for info in traceback:
-            line1 += '_\t' if info['gap-in'] == 'longest' else longest.pop() + '\t'
-            line2 += '|\t' if info['indentity'] else ' \t'
-            line3 += '_\t' if info['gap-in'] == 'shortest' else shortest.pop() + '\t'
+            line1 += '_ ' if info['gap-in'] == 'longest' else longest.pop() + ' '
+            line2 += '| ' if info['indentity'] else '  '
+            line3 += '_ ' if info['gap-in'] == 'shortest' else shortest.pop() + ' '
             
         
         return line1 + '\n' + line2 + '\n' + line3
@@ -170,8 +170,8 @@ class SimpleNeedleManAligner(Aligner):
     understandable
     """
     def graphMatrix(self):
-        graph = '\t'
-        space = '\t'
+        graph = '  '
+        space = ' '
 
         for char in self.longest:
             graph += ' ' + char + space
@@ -194,14 +194,14 @@ class SimpleNeedleManAligner(Aligner):
     that were collected in the traceback
     """
     def graphTraceback(self, traceback):
-        graph = ''
-        space = '\t'
-
-        positions = [info['position'] for info in traceback]
+        graph = '  '
+        space = ' '
 
         for char in self.longest:
-            graph += space + ' ' + char
+            graph += ' ' + char + space
         graph += '\n'
+
+        positions = [info['position'] for info in traceback]
 
         for i in range(self.rowsLength):
             graph += self.shortest[i] + space
@@ -212,7 +212,7 @@ class SimpleNeedleManAligner(Aligner):
                     else:
                         graph += str(self.matrix[i][j]) + space
                 else:
-                    graph += ' ' + space
+                    graph += '  ' + space
             graph += '\n'
 
         return graph
