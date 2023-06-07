@@ -3,8 +3,10 @@ import tkinter.filedialog
 from LAB import LAB
 from SimpleNeedlemanAligner import SimpleNeedleManAligner
 from MultplePathsNeedlemanAligner import MultplePathsNeedlemanAligner
+import subprocess
 
 lab = LAB()
+filename = "NeedlemanWunsch.txt"
 
 def validateInput(options, message = '\n * ERROR: Invalid Option, try again... '):
         length = len(options)
@@ -72,9 +74,10 @@ def alignmentOptions():
 
 
 def storeInFile(input):
-    file = open("NeedlemanWunsch.txt", 'w')
+    file = open(filename, 'w')
     file.write(input)
     file.close()
+
 
 def run():
     repeat = True
@@ -109,7 +112,11 @@ def run():
             lab.setAligner(MultplePathsNeedlemanAligner([sequence1, sequence2]))
         
         alignmentOptions()
-        print('\nNOTE: File NeedlemanWunsch.txt was created whith the whole run info, check it out!! \n')
+        print(f'\nNOTE: File {filename} was created whith the whole run info, check it out!!')
+        print('      Close it to continue... \n')
+
+        subprocess.run(['notepad', filename])
+
         while repeat not in ['Y', 'N', 'y', 'n']:
             repeat = input('Start Again? Y/N ... ')
 
