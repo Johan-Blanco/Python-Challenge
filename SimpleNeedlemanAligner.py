@@ -104,15 +104,8 @@ class SimpleNeedleManAligner(Aligner):
     def getTraceBackInfo(self, i, j):
         info = {'position': (i,j), 'value': self.matrix[i][j]}
         if self.shortest[i] == self.longest[j]:
-            if i == 0 and j != 0:
-                info['gap-in'] = 'shortest'
-                info['indentity'] = False
-            elif j == 0 and i != 0:
-                info['gap-in'] = 'longest'
-                info['indentity'] = False
-            else:
-                info['gap-in'] = 'N/A'
-                info['indentity'] = True
+            info['gap-in'] = 'N/A'
+            info['indentity'] = True
             i,j = i-1, j-1
         else:
             maxValuePosition = self.getMaxValueForTraceback(i, j)[1] # use different function
@@ -134,20 +127,37 @@ class SimpleNeedleManAligner(Aligner):
         traceback = []
 
         while i >= 0 and j >= 0:
-            info, i, j = self.getTraceBackInfo(i, j)
+            info = {'position': (i,j), 'value': self.matrix[i][j]}
+            if self.shortest[i] == self.longest[j]:
+                info['gap-in'] = 'N/A'
+                info['indentity'] = True
+                i,j = i-1, j-1
+            else:
+                maxValuePosition = self.getMaxValueForTraceback(i, j)[1] # use different function
+                if not maxValuePosition == (i-1,j-1) and info['position'] != (0,0):
+                    info['gap-in'] = 'shortest' if maxValuePosition[1] == j-1 else 'longest'
+                else:
+                    info['gap-in'] = 'N/A'
+                info['indentity'] = False
+                i,j = maxValuePosition
             traceback.append(info)
         
-        if info['position'] != (0,0):
-            if i < 0:
-                # check to the left
-                while j >= 0:
-                    info, i, j = self.getTraceBackInfo(0, j)
-                    traceback.append(info)
-            elif j < 0:
-                # check up
-                while i >= 0:
-                    info, i, j = self.getTraceBackInfo(i, 0)
-                    traceback.append(info)
+
+        # check to the left
+        while j >= 0:
+            info = {'position': (0,j), 'value': self.matrix[i][j]}
+            info['indentity'] = self.shortest[0] == self.longest[j] and info['position'] == (0,0)
+            info['gap-in'] = 'shortest' if not info['indentity'] else 'N/A'
+            j -= 1
+            traceback.append(info)
+
+        # check up
+        while i >= 0:
+            info = {'position': (i,0), 'value': self.matrix[i][j]}
+            info['indentity'] = self.shortest[0] == self.longest[0] and info['position'] == (0,0)
+            info['gap-in'] = 'longest'if not info['indentity'] else 'N/A'
+            i -= 1
+            traceback.append(info)
 
         return traceback
 
