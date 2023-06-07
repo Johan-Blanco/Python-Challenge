@@ -24,7 +24,7 @@ class Aligner(ABC):
         pass
 
     @abstractmethod
-    def getTraceback(self):
+    def getTraceback(self, fn):
         pass
 
     @abstractmethod
