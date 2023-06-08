@@ -112,7 +112,7 @@ def run():
             lab.setAligner(MultplePathsNeedlemanAligner([sequence1, sequence2]))
         
         alignmentOptions()
-        print(f'\nNOTE: File {filename} was created whith the whole run info, check it out!!')
+        print(f'\nNOTE: File {filename} was created with the whole run info, check it out!!')
         print('      Close it to continue... \n')
 
         subprocess.run(['notepad', filename])
