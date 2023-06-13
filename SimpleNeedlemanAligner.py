@@ -86,7 +86,8 @@ class SimpleNeedleManAligner(Aligner):
             diagonal = (self.matrix[i-1][j-1], (i-1,j-1))
             left = (self.matrix[i][j-1], (i, j-1))
             up = (self.matrix[i-1][j], (i-1, j))
-            maxValue =  max(diagonal, left, up)
+            valueList = [diagonal, left, up]
+            maxValue = max(valueList, key=lambda item: item[0])
             return diagonal if maxValue[0] == diagonal[0] else maxValue
         elif i == 0:
             left = self.matrix[i][j-1], (i, j-1)
@@ -113,10 +114,14 @@ class SimpleNeedleManAligner(Aligner):
                 i,j = i-1, j-1
             else:
                 maxValuePosition = self.getMaxValueForTraceback(i, j)[1] # use different function
-                if not maxValuePosition == (i-1,j-1) and info['position'] != (0,0):
-                    info['gap-in'] = 'shortest' if maxValuePosition[1] == j-1 else 'longest'
-                else:
+                diagonalPosition = (i-1,j-1)
+                leftPosition = (i, j-1)
+                if maxValuePosition == diagonalPosition:
                     info['gap-in'] = 'N/A'
+                elif maxValuePosition == leftPosition:
+                    info['gap-in'] = 'shortest'
+                else:
+                    info['gap-in'] = 'longest'
                 info['indentity'] = False
                 i,j = maxValuePosition
             traceback.append(info)
@@ -149,6 +154,7 @@ class SimpleNeedleManAligner(Aligner):
     This funtion graphs a human readable representation of the traceback
     """
     def humaReadableRepresentation(self, traceback): #WRONG
+        traceback = traceback[:]
         traceback.reverse()
         line1 = ''
         line2 = ''
@@ -156,13 +162,17 @@ class SimpleNeedleManAligner(Aligner):
         shortest = [*self.shortest[::-1]]
         longest = [*self.longest[::-1]]
 
-        for info in traceback:
-            line1 += '_ ' if info['gap-in'] == 'longest' else longest.pop() + ' '
-            line2 += '| ' if info['indentity'] else '  '
-            line3 += '_ ' if info['gap-in'] == 'shortest' else shortest.pop() + ' '
-            
+        try:
+            for info in traceback:
+                line1 += '_ ' if info['gap-in'] == 'longest' else longest.pop() + ' '
+                line2 += '| ' if info['indentity'] else '  '
+                line3 += '_ ' if info['gap-in'] == 'shortest' else shortest.pop() + ' '
+            return line1 + '\n' + line2 + '\n' + line3
         
-        return line1 + '\n' + line2 + '\n' + line3
+        except Exception as e:
+            error = 'Oops!, something happed! This feature is still in progress....\n'
+            error += line1 + '\n' + line2 + '\n' + line3
+            return error 
         
         
     """

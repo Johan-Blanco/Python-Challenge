@@ -7,7 +7,7 @@ if __name__ == '__main__':
 
         # ['GAATTCAGTTAA','AGTTA'],
         # ['AGATA', 'AAGTA'],
-        ['GAATTCAGTTA', 'GGATCGA']
+        # ['GAATTCAGTTA', 'GGATCGA']
         # ['GAATTCAGS', 'GGATCGAERDWER'],
         # ['GAATTCAGSUYWEDGFUYWDE', 'GGATCGAERDWER'] # miedo terror
         # ['GAAT', 'DWER']
@@ -20,8 +20,8 @@ if __name__ == '__main__':
     #     print('===================================================================')
     #     print('Squence1: ', pair[0])
     #     print('Squence2: ', pair[1])
-    # lab.setAligner(SimpleNeedleManAligner(['GAATTCAGSUYWEDGFUYWDE', 'GGATCGAERDWER']))
-    lab.setAligner(MultplePathsNeedlemanAligner(['GAATTCAGSUYWEDGFUYWDE', 'GGATCGAERDWER']))
+    # lab.setAligner(MultplePathsNeedlemanAligner(['GAATTCAGSUYWEDGFUYWDE', 'GGATCGAERDWER']))
+    lab.setAligner(MultplePathsNeedlemanAligner(['GAATTCAGTTA', 'GGATCGA']))
     aligner = lab.getAligner()
     matrixGraph, aligmentList = aligner.alignSequences()
     print(matrixGraph)
@@ -30,5 +30,5 @@ if __name__ == '__main__':
         print(aligment['humanReadable'])
         print(aligment['sequenceIdentity'])
         print(aligment['alignmentScore'])
-        # for info in aligment['traceback']:
-        #     print(info)
+        for info in aligment['traceback']:
+            print(info)

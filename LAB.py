@@ -21,7 +21,7 @@ class LAB:
         for char in sequence:
             if char not in typeComponets:
                 return False
-        return True
+        return len(sequence) != 0
 
     def validateSequence(self, sequence: str):
         for type in typeList:
@@ -29,7 +29,7 @@ class LAB:
             if valid:
                 return (type, valid)
             
-        return ('No valid', False)
+        return ('Invalid', False)
     
     def areComparableSequences(self, sequence1: str, sequence2: str):
         for type in typeList:
